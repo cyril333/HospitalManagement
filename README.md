@@ -120,7 +120,13 @@ Admin panel: **http://127.0.0.1:8080/admin**
 
 - Group 5 (5 members)
 
----
+- Abesia, Ian
+- Antolijao, Ave Cyril G.
+- Jabines, Synd T.
+- Lanticse, Vince Clark B.
+- Lariosa, Allen N.
+
+
 
 ## Notes
 
