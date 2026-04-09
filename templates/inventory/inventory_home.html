@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.3px; }
+    .page-header p { color: #888; font-size: 0.9rem; margin-top: 0.25rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1.75rem; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 1.25rem; transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
+    .card:hover { box-shadow: 0 6px 20px rgba(10,138,138,0.1); transform: translateY(-2px); border-color: #0a8a8a; }
+    .card-icon { width: 50px; height: 50px; border-radius: 10px; background: #e8f5f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #0a8a8a; }
+    .card-icon svg { width: 24px; height: 24px; }
+    .card-info h3 { font-size: 1rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.2rem; }
+    .card-info p { font-size: 0.82rem; color: #999; }
+    .count { font-size: 1.5rem; font-weight: 700; color: #0a8a8a; }
+    .arrow { margin-left: auto; color: #ccc; font-size: 1.1rem; transition: color 0.2s; }
+    .card:hover .arrow { color: #0a8a8a; }
+</style>
+
+<div class="page-header">
+    <h1>Inventory</h1>
+    <p>Manage medicines and hospital supplies.</p>
+</div>
+
+<div class="grid">
+    <a href="{% url 'medicine_list' %}" class="card">
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            </svg>
+        </div>
+        <div class="card-info">
+            <h3>Medicines</h3>
+            <p><span class="count">{{ medicine_count }}</span> items in stock</p>
+        </div>
+        <span class="arrow">›</span>
+    </a>
+
+    <a href="{% url 'supplies_list' %}" class="card">
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+        </div>
+        <div class="card-info">
+            <h3>Supplies</h3>
+            <p><span class="count">{{ supplies_count }}</span> items in stock</p>
+        </div>
+        <span class="arrow">›</span>
+    </a>
+</div>
+{% endblock %}
