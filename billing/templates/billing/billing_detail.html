@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Bill Details #{{ bill.bill_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h4><i class="fas fa-file-invoice"></i> Bill #{{ bill.bill_id }}</h4>
+        <span class="badge {% if bill.payment_status == 'PAID' %}bg-success{% elif bill.payment_status == 'UNPAID' %}bg-danger{% else %}bg-warning text-dark{% endif %} fs-6">
+            {{ bill.get_payment_status_display }}
+        </span>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5>Patient Information</h5>
+                <p><strong>Name:</strong> {{ bill.patient.first_name }} {{ bill.patient.last_name }}</p>
+                <p><strong>Bill Date:</strong> {{ bill.bill_date }}</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Charge Details</h5>
+                <table class="table table-sm">
+                    <tr><th>Admission:</th><td>{{ bill.admission|default:"—" }}</td></tr>
+                    <tr><th>Consultation:</th><td>{{ bill.consultation|default:"—" }}</td></tr>
+                    <tr><th>Prescription:</th><td>{{ bill.prescription|default:"—" }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 offset-md-6">
+                <table class="table table-bordered">
+                    <tr><th>Subtotal</th><td>₱{{ bill.subtotal }}</td></tr>
+                    <tr><th>Discount</th><td>₱{{ bill.discount }}</td></tr>
+                    <tr class="table-active"><th>Total Amount</th><td><strong>₱{{ bill.total_amount }}</strong></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'billing:update' bill.pk %}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit Bill
+            </a>
+            <a href="{% url 'billing:list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+            <!-- Optional: Print button -->
+            <button onclick="window.print();" class="btn btn-info">
+                <i class="fas fa-print"></i> Print
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

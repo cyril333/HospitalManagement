@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+
+# Django
+*.log
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+static/
+*.mo
+
+# Database (MySQL local credentials – if you store them in settings, avoid committing)
+*.sql
+*.sqlite3
+
+# Environment variables (store sensitive keys here)
+.env
+.env.local
+.env.*.local
+
+# IDE / Editor – PyCharm
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+.virtualenv
+
+# Secrets / Keys
+secret_key.txt
+config/secrets.json
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.cache
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Django migrations (optional – some teams keep them, but generated files are safe to commit; here we exclude only if you prefer)
+# */migrations/
+# !*/migrations/__init__.py
+
+# OS junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Uploads / user-uploaded files
+uploads/
+media/
+
+# Backup files
+*.bak
+*.orig
+*.tmp
