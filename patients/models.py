@@ -1,9 +1,14 @@
 from django.db import models
 
 class Patient(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    # add other fields later
+    patient_id = models.AutoField(primary_key=True)
+    patient_name = models.CharField(max_length=200)
+    dateofbirth = models.DateField()
+    age = models.IntegerField()
+    status = models.CharField(max_length=100, default='Active')
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return self.patient_name
+
+    class Meta:
+        db_table = 'patients'

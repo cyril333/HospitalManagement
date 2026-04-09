@@ -1,25 +1,64 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('index')
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('index')
-        else:
-            return render(request, 'login.html', {'form': {'errors': True}})
-    return render(request, 'login.html')
+from .models import DoctorProfile, NurseProfile
+from .forms import DoctorForm, NurseForm
 
 @login_required(login_url='/login/')
-def index(request):
-    return render(request, 'index.html')
+def doctor_list(request):
+    doctors = DoctorProfile.objects.all()
+    return render(request, 'accounts/doctor_list.html', {'doctors': doctors})
 
-def logout_view(request):
-    logout(request)
-    return redirect('login')
+@login_required(login_url='/login/')
+def doctor_add(request):
+    form = DoctorForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('doctor_list')
+    return render(request, 'accounts/form.html', {'form': form, 'title': 'Add Doctor', 'back_url': 'doctor_list'})
+
+@login_required(login_url='/login/')
+def doctor_edit(request, pk):
+    doctor = get_object_or_404(DoctorProfile, pk=pk)
+    form = DoctorForm(request.POST or None, instance=doctor)
+    if form.is_valid():
+        form.save()
+        return redirect('doctor_list')
+    return render(request, 'accounts/form.html', {'form': form, 'title': 'Edit Doctor', 'back_url': 'doctor_list'})
+
+@login_required(login_url='/login/')
+def doctor_delete(request, pk):
+    doctor = get_object_or_404(DoctorProfile, pk=pk)
+    if request.method == 'POST':
+        doctor.delete()
+        return redirect('doctor_list')
+    return render(request, 'accounts/confirm_delete.html', {'item': doctor.user.get_full_name()})
+
+@login_required(login_url='/login/')
+def nurse_list(request):
+    nurses = NurseProfile.objects.all()
+    return render(request, 'accounts/nurse_list.html', {'nurses': nurses})
+
+@login_required(login_url='/login/')
+def nurse_add(request):
+    form = NurseForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('nurse_list')
+    return render(request, 'accounts/form.html', {'form': form, 'title': 'Add Nurse', 'back_url': 'nurse_list'})
+
+@login_required(login_url='/login/')
+def nurse_edit(request, pk):
+    nurse = get_object_or_404(NurseProfile, pk=pk)
+    form = NurseForm(request.POST or None, instance=nurse)
+    if form.is_valid():
+        form.save()
+        return redirect('nurse_list')
+    return render(request, 'accounts/form.html', {'form': form, 'title': 'Edit Nurse', 'back_url': 'nurse_list'})
+
+@login_required(login_url='/login/')
+def nurse_delete(request, pk):
+    nurse = get_object_or_404(NurseProfile, pk=pk)
+    if request.method == 'POST':
+        nurse.delete()
+        return redirect('nurse_list')
+    return render(request, 'accounts/confirm_delete.html', {'item': nurse.user.get_full_name()})

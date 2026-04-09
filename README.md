@@ -1,37 +1,113 @@
 # HospitalManagement - Django Project
 
-A web-based Hospital Inventory Management System built with Django and MySQL. This project was developed as a group assignment, with each app representing a specific module of the system.
+A web-based Hospital Management System built with Django and MySQL. This project was developed as a group assignment, with each app representing a specific module of the system.
 
 ***
 
 ## Project Structure
 
     HospitalManagement/
-    ├── accounts/           # User authentication and login
-    ├── admissions/         # Patient admission management
-    ├── billing/            # Billing and payment records
-    ├── consultations/      # Doctor consultations and prescriptions
-    ├── departments/        # Hospital departments
-    ├── inventory/          # Medical inventory management
-    │   ├── models.py       # InventoryMedicine and Supplies models
-    │   ├── views.py        # Inventory, medicine, and supplies views
-    │   ├── urls.py         # Inventory URL routes
-    │   ├── forms.py        # Medicine and supplies forms
-    │   └── admin.py        # Admin panel registration
-    ├── patients/           # Patient records
-    ├── hospital_project/   # Main project settings and URLs
+    ├── accounts/
+    │   ├── migrations/
+    │   ├── templates/accounts/
+    │   │   ├── doctor_list.html
+    │   │   ├── nurse_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── admissions/
+    │   ├── migrations/
+    │   ├── templates/admissions/
+    │   │   ├── admission_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── billing/
+    │   ├── migrations/
+    │   ├── templates/billing/
+    │   │   ├── billing_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── consultations/
+    │   ├── migrations/
+    │   ├── templates/consultations/
+    │   │   ├── consultation_list.html
+    │   │   ├── prescription_list.html
+    │   │   ├── medical_record_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── departments/
+    │   ├── migrations/
+    │   ├── templates/departments/
+    │   │   ├── department_list.html
+    │   │   ├── room_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── inventory/
+    │   ├── migrations/
+    │   ├── templates/inventory/
+    │   │   ├── inventory_home.html
+    │   │   ├── medicine_list.html
+    │   │   ├── medicine_form.html
+    │   │   ├── supplies_list.html
+    │   │   ├── supplies_form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── patients/
+    │   ├── migrations/
+    │   ├── templates/patients/
+    │   │   ├── patient_list.html
+    │   │   ├── form.html
+    │   │   └── confirm_delete.html
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── forms.py
+    │   ├── models.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── hospital_project/
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
     ├── templates/
-    │   ├── base.html               # Base template
-    │   ├── index.html              # Home/index page
-    │   ├── login.html              # Login page
-    │   └── inventory/
-    │       ├── inventory_home.html # Inventory landing page
-    │       ├── medicine_list.html  # Medicine inventory list
-    │       ├── medicine_form.html  # Add/edit medicine form
-    │       ├── supplies_list.html  # Supplies inventory list
-    │       ├── supplies_form.html  # Add/edit supply form
-    │       └── confirm_delete.html # Delete confirmation page
+    │   ├── base.html
+    │   ├── index.html
+    │   └── login.html
     ├── manage.py
+    ├── requirements.txt
     ├── .gitignore
     └── README.md
 
@@ -57,13 +133,13 @@ A web-based Hospital Inventory Management System built with Django and MySQL. Th
 
     pip install -r requirements.txt
 
-If `requirements.txt` is not present, install manually:
+If requirements.txt is not present, install manually:
 
     pip install Django==4.2 mysqlclient
 
 ### 3. Configure the Database
 
-Open `hospital_project/settings.py` and update the `DATABASES` section with your MySQL credentials:
+Open hospital_project/settings.py and update the DATABASES section:
 
     DATABASES = {
         'default': {
@@ -78,9 +154,15 @@ Open `hospital_project/settings.py` and update the `DATABASES` section with your
 
 Make sure the database is already created in MySQL before running migrations.
 
-### 4. Apply Migrations
+### 4. Apply Migrations (run in this order)
 
-    python manage.py makemigrations
+    python manage.py makemigrations departments
+    python manage.py makemigrations accounts
+    python manage.py makemigrations patients
+    python manage.py makemigrations inventory
+    python manage.py makemigrations consultations
+    python manage.py makemigrations admissions
+    python manage.py makemigrations billing
     python manage.py migrate
 
 ### 5. Create a Superuser (Admin Account)
@@ -93,39 +175,66 @@ Follow the prompts to set a username, email, and password.
 
     python manage.py runserver 8080
 
-The project will be accessible at: **http://127.0.0.1:8080**
+The project will be accessible at: http://127.0.0.1:8080
 
-Admin panel: **http://127.0.0.1:8080/admin**
+Admin panel: http://127.0.0.1:8080/admin
 
 ***
 
 ## App Descriptions
 
-| App | Description |
-|---|---|
-| `accounts` | Handles user authentication, login, and user roles |
-| `admissions` | Manages patient admissions and discharge records |
-| `billing` | Tracks billing, payments, and invoices |
-| `consultations` | Records doctor consultations and prescriptions |
-| `departments` | Manages hospital departments and assignments |
-| `inventory` | Tracks medical supplies and equipment (medicines & supplies) |
-| `patients` | Stores and manages patient information and records |
+| App           | Description                                                   |
+|---------------|---------------------------------------------------------------|
+| accounts      | Handles user authentication, login, doctors, and nurses       |
+| admissions    | Manages patient admissions and discharge records              |
+| billing       | Tracks billing, payments, and invoices                        |
+| consultations | Records doctor consultations, prescriptions, medical records  |
+| departments   | Manages hospital departments and rooms                        |
+| inventory     | Tracks medicines and hospital supplies                        |
+| patients      | Stores and manages patient information and records            |
 
 ***
 
-## Inventory Module URLs
+## Module URLs
 
-| URL | Description |
-|---|---|
-| `/inventory/` | Inventory landing page |
-| `/inventory/medicines/` | Medicine inventory list |
-| `/inventory/medicines/add/` | Add new medicine |
-| `/inventory/medicines/edit/<id>/` | Edit medicine |
-| `/inventory/medicines/delete/<id>/` | Delete medicine |
-| `/inventory/supplies/` | Supplies inventory list |
-| `/inventory/supplies/add/` | Add new supply |
-| `/inventory/supplies/edit/<id>/` | Edit supply |
-| `/inventory/supplies/delete/<id>/` | Delete supply |
+| Module        | URL                          |
+|---------------|------------------------------|
+| Home          | /                            |
+| Login         | /login/                      |
+| Admin Panel   | /admin/                      |
+| Accounts      | /accounts/doctors/           |
+|               | /accounts/nurses/            |
+| Departments   | /departments/                |
+|               | /departments/rooms/          |
+| Patients      | /patients/                   |
+| Admissions    | /admissions/                 |
+| Consultations | /consultations/              |
+|               | /consultations/prescriptions/|
+|               | /consultations/records/      |
+| Billing       | /billing/                    |
+| Inventory     | /inventory/                  |
+|               | /inventory/medicines/        |
+|               | /inventory/supplies/         |
+
+***
+
+## Resetting Migrations (if needed)
+
+If you encounter migration conflicts, follow these steps:
+
+1. Delete all migration files except __init__.py in each app's migrations/ folder:
+
+    del /s /q accounts\migrations\0*.py
+    del /s /q admissions\migrations\0*.py
+    del /s /q billing\migrations\0*.py
+    del /s /q consultations\migrations\0*.py
+    del /s /q departments\migrations\0*.py
+    del /s /q inventory\migrations\0*.py
+    del /s /q patients\migrations\0*.py
+
+2. Drop and recreate your database in MySQL Workbench.
+
+3. Re-run makemigrations in order (see Step 4 above).
 
 ***
 
@@ -133,11 +242,11 @@ Admin panel: **http://127.0.0.1:8080/admin**
 
 **Group 5**
 
-- Abesia, Ian
-- Antolijao, Ave Cyril G.
-- Jabines, Synd T.
+- Abesia, Ian - Accounts, Departments
+- Antolijao, Ave Cyril G. - Consultations, Admissions
+- Jabines, Synd T. - Patients
 - Lanticse, Vince Clark B. — Inventory App
-- Lariosa, Allen N.
+- Lariosa, Allen N. - Billing
 
 ***
 
@@ -145,4 +254,5 @@ Admin panel: **http://127.0.0.1:8080/admin**
 
 - This project uses Django 4.2 for compatibility with MySQL/MariaDB 10.4.
 - Ensure MySQL service is running before starting the server.
-- The `.env` file (if used) is excluded from version control for security.
+- Do not set AUTH_USER_MODEL in settings.py — the project uses Django's built-in User model.
+- The .env file (if used) is excluded from version control for security.

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; }
+    .btn { padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
+    .btn-primary { background: #0a8a8a; color: white; }
+    .btn-primary:hover { background: #077070; }
+    .btn-secondary { background: #f0f0f0; color: #444; }
+    .btn-danger { background: #fef0f0; color: #c0392b; border: 1px solid #fcd0d0; }
+    .card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8f8f8; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e8e8e8; }
+    td { padding: 0.85rem 1rem; font-size: 0.875rem; color: #333; border-bottom: 1px solid #f0f0f0; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+    .actions { display: flex; gap: 0.5rem; }
+    .badge { padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge-pending { background: #fffbe6; color: #d4a017; }
+    .badge-completed { background: #f0faf0; color: #27ae60; }
+    .badge-cancelled { background: #fef0f0; color: #c0392b; }
+</style>
+<div class="page-header">
+    <h1>Consultations</h1>
+    <a href="{% url 'consultation_add' %}" class="btn btn-primary">+ New Consultation</a>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for consultation in consultations %}
+            <tr>
+                <td>{{ consultation.consultation_id }}</td>
+                <td><strong>{{ consultation.patient.patient_name }}</strong></td>
+                <td>{{ consultation.doctor.user.get_full_name }}</td>
+                <td>{{ consultation.consultation_date }}</td>
+                <td>{{ consultation.consultation_time }}</td>
+                <td>
+                    <span class="badge
+                        {% if consultation.status == 'Pending' %}badge-pending
+                        {% elif consultation.status == 'Completed' %}badge-completed
+                        {% else %}badge-cancelled{% endif %}">
+                        {{ consultation.status }}
+                    </span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a href="{% url 'consultation_edit' consultation.pk %}" class="btn btn-secondary">Edit</a>
+                        <a href="{% url 'consultation_delete' consultation.pk %}" class="btn btn-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center; color:#999; padding:2rem;">No consultations found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
