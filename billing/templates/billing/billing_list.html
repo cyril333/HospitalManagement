@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2><i class="fas fa-receipt"></i> Billing Records</h2>
-    <a href="{% url 'billing:create' %}" class="btn btn-primary">
+    <a href="{% url 'billing_add' %}" class="btn btn-primary">
         <i class="fas fa-plus-circle"></i> Create New Bill
     </a>
 </div>
@@ -44,17 +44,17 @@
                         </td>
                         <td>{{ bill.bill_date }}</td>
                         <td>
-                            <a href="{% url 'billing:detail' bill.pk %}" class="btn btn-sm btn-outline-info">
+                            <a href="{% url 'billing_detail' bill.pk %}" class="btn btn-sm btn-outline-info">
                                 <i class="fas fa-eye"></i> View
                             </a>
-                            <a href="{% url 'billing:update' bill.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <a href="{% url 'billing_edit' bill.pk %}" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No bills found. <a href="{% url 'billing:create' %}">Create one</a>.</td>
+                        <td colspan="8" class="text-center">No bills found. <a href="{% url 'billing_add' %}">Create one</a>.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

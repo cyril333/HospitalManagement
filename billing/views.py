@@ -9,12 +9,17 @@ def billing_list(request):
     return render(request, 'billing/billing_list.html', {'bills': bills})
 
 @login_required(login_url='/login/')
+def billing_detail(request, pk):
+    bill = get_object_or_404(Billing, pk=pk)
+    return render(request, 'billing/billing_detail.html', {'bill': bill})
+
+@login_required(login_url='/login/')
 def billing_add(request):
     form = BillingForm(request.POST or None)
     if form.is_valid():
         form.save()
         return redirect('billing_list')
-    return render(request, 'billing/form.html', {'form': form, 'title': 'Add Bill', 'back_url': 'billing_list'})
+    return render(request, 'billing/billing_form.html', {'form': form, 'title': 'Add Bill', 'back_url': 'billing_list'})
 
 @login_required(login_url='/login/')
 def billing_edit(request, pk):
@@ -23,7 +28,7 @@ def billing_edit(request, pk):
     if form.is_valid():
         form.save()
         return redirect('billing_list')
-    return render(request, 'billing/form.html', {'form': form, 'title': 'Edit Bill', 'back_url': 'billing_list'})
+    return render(request, 'billing/billing_form.html', {'form': form, 'title': 'Edit Bill', 'back_url': 'billing_list'})
 
 @login_required(login_url='/login/')
 def billing_delete(request, pk):
