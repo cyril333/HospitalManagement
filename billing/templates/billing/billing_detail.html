@@ -37,10 +37,10 @@
         </div>
 
         <div class="mt-4">
-            <a href="{% url 'billing:update' bill.pk %}" class="btn btn-warning">
+            <a href="{% url 'billing_edit' bill.pk %}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Bill
             </a>
-            <a href="{% url 'billing:list' %}" class="btn btn-secondary">
+            <a href="{% url 'billing_list' %}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
             <!-- Optional: Print button -->
