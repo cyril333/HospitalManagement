@@ -74,6 +74,8 @@ A web-based Hospital Management System built with Django and MySQL. This project
     ├── inventory/
     │   ├── migrations/
     │   ├── templates/inventory/
+    │   │   ├── index.html
+    │   │   ├── addNewInventoryMedicine.html
     │   │   ├── inventory_home.html
     │   │   ├── medicine_list.html
     │   │   ├── medicine_form.html
