@@ -1,7 +1,7 @@
-# HospitalManagement - Django Project
+# 🏥 HospitalManagement — Django Project
 
-A web-based Hospital Management System built with Django and MySQL. This project was developed as a group assignment, with each app representing a specific module of the system.
-
+> A web-based Hospital Management System built with **Django 4.2** and **MySQL**.  
+> Developed as a group assignment for **CSIT327 Information Management 2**.
 ***
 
 ## Project Structure
