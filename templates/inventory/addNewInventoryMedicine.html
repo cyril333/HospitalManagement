@@ -5,17 +5,18 @@
     .form-title { font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.5rem; letter-spacing: -0.3px; }
     .form-group { margin-bottom: 1.25rem; }
     .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.2px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; background: #fafafa; transition: border-color 0.2s, box-shadow 0.2s; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #0a8a8a; box-shadow: 0 0 0 3px rgba(10,138,138,0.1); background: white; }
+    .form-group input, .form-group select { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; background: #fafafa; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+    .form-group input:focus, .form-group select:focus { border-color: #0a8a8a; box-shadow: 0 0 0 3px rgba(10,138,138,0.1); background: white; }
     .form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
-    .btn { padding: 0.6rem 1.4rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
+    .btn { padding: 0.6rem 1.4rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
     .btn-primary { background: #0a8a8a; color: white; }
     .btn-primary:hover { background: #077070; }
     .btn-secondary { background: #f0f0f0; color: #555; }
     .btn-secondary:hover { background: #e0e0e0; }
 </style>
+
 <div class="form-card">
-    <div class="form-title">{{ title }}</div>
+    <div class="form-title">Add New Medicine</div>
     <form method="POST">
         {% csrf_token %}
         {% for field in form %}
@@ -25,8 +26,8 @@
         </div>
         {% endfor %}
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a href="{% url back_url %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save Medicine</button>
+            <a href="{% url 'medicine_list' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

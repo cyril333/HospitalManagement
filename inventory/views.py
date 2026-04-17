@@ -10,7 +10,7 @@ from .forms import InventoryMedicineForm, SuppliesForm
 def inventory_home(request):
     medicine_count = InventoryMedicine.objects.count()
     supplies_count = Supplies.objects.count()
-    return render(request, 'inventory/inventory_home.html', {
+    return render(request, 'inventory/index.html', {   
         'medicine_count': medicine_count,
         'supplies_count': supplies_count,
     })
@@ -26,7 +26,7 @@ def medicine_add(request):
     if form.is_valid():
         form.save()
         return redirect('medicine_list')
-    return render(request, 'inventory/medicine_form.html', {'form': form, 'title': 'Add Medicine'})
+    return render(request, 'inventory/addNewInventoryMedicine.html', {'form': form})
 
 @login_required(login_url='/login/')
 def medicine_edit(request, pk):
