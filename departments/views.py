@@ -62,3 +62,21 @@ def room_delete(request, pk):
         room.delete()
         return redirect('room_list')
     return render(request, 'departments/confirm_delete.html', {'item': room.room_number})
+
+# New view for addNewDepartment URL
+@login_required(login_url='/login/')
+def add_new_department(request):
+    form = DepartmentForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('department_list')
+    return render(request, 'departments/addNewDepartment.html', {'form': form})
+
+# New view for addNewRoom URL
+@login_required(login_url='/login/')
+def add_new_room(request):
+    form = RoomForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('room_list')
+    return render(request, 'departments/addNewRoom.html', {'form': form})

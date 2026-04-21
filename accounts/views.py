@@ -62,3 +62,20 @@ def nurse_delete(request, pk):
         nurse.delete()
         return redirect('nurse_list')
     return render(request, 'accounts/confirm_delete.html', {'item': nurse.user.get_full_name()})
+# New view for addNewDoctor URL
+@login_required(login_url='/login/')
+def add_new_doctor(request):
+    form = DoctorForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('doctor_list')
+    return render(request, 'accounts/addNewDoctor.html', {'form': form})
+
+# New view for addNewNurse URL
+@login_required(login_url='/login/')
+def add_new_nurse(request):
+    form = NurseForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('nurse_list')
+    return render(request, 'accounts/addNewNurse.html', {'form': form})
