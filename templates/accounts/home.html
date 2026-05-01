@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .home-header {
+        margin-bottom: 2rem;
+    }
+    .home-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    .home-header p {
+        color: #666;
+        font-size: 0.95rem;
+        margin-top: 0.3rem;
+    }
+    .nav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        max-width: 800px;
+    }
+    .nav-card {
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 14px;
+        padding: 1.8rem 1.5rem;
+        text-decoration: none;
+        color: #1a1a1a;
+        transition: box-shadow 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .nav-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border-color: #0a8a8a;
+    }
+    .nav-card .icon {
+        font-size: 1.8rem;
+    }
+    .nav-card .label {
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    .nav-card .desc {
+        font-size: 0.82rem;
+        color: #888;
+    }
+    .logout-form { margin-top: 0; }
+    .nav-card-btn {
+        background: none;
+        border: 1px solid #e8e8e8;
+        border-radius: 14px;
+        padding: 1.8rem 1.5rem;
+        text-align: left;
+        color: #1a1a1a;
+        cursor: pointer;
+        transition: box-shadow 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        width: 100%;
+        font-family: inherit;
+    }
+    .nav-card-btn:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border-color: #c0392b;
+    }
+    .nav-card-btn .icon { font-size: 1.8rem; }
+    .nav-card-btn .label { font-size: 1rem; font-weight: 700; }
+    .nav-card-btn .desc { font-size: 0.82rem; color: #888; }
+</style>
+
+<div class="home-header">
+    <h1>Welcome, {{ request.user.first_name|default:request.user.username }} 👋</h1>
+    <p>What would you like to do today?</p>
+</div>
+
+<div class="nav-grid">
+    <a href="{% url 'edit_profile' %}" class="nav-card">
+        <span class="icon">👤</span>
+        <span class="label">Edit Profile</span>
+        <span class="desc">Update your name, email, or password.</span>
+    </a>
+
+    <a href="{% url 'patient_add' %}" class="nav-card">
+        <span class="icon">➕</span>
+        <span class="label">Add New Record</span>
+        <span class="desc">Register a new patient in the system.</span>
+    </a>
+
+    <a href="{% url 'patient_list' %}" class="nav-card">
+        <span class="icon">📋</span>
+        <span class="label">View Patients</span>
+        <span class="desc">Browse and manage all patient records.</span>
+    </a>
+
+    <form method="POST" action="{% url 'logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="nav-card-btn">
+            <span class="icon">🚪</span>
+            <span class="label">Log Off</span>
+            <span class="desc">Sign out of your account safely.</span>
+        </button>
+    </form>
+</div>
+{% endblock %}
