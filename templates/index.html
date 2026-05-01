@@ -87,13 +87,99 @@
     }
 
     .module-card:hover .arrow { color: #0a8a8a; }
+
+    /* New quick action bar styles */
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .quick-action-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: background 0.2s, border-color 0.2s;
+    }
+
+    .quick-action-link svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .link-edit-profile {
+        background: #f9f9f9;
+        color: #333;
+    }
+
+    .link-edit-profile:hover {
+        background: #f0f0f0;
+        border-color: #ccc;
+    }
+
+    .link-add-record {
+        background: #0a8a8a;
+        color: white;
+        font-weight: 600;
+        border-color: #0a8a8a;
+    }
+
+    .link-add-record:hover {
+        background: #077070;
+        border-color: #077070;
+    }
+
+    .link-logoff {
+        background: #f9f9f9;
+        color: #555;
+    }
+
+    .link-logoff:hover {
+        background: #f0f0f0;
+        border-color: #ccc;
+    }
 </style>
 
 <div class="hero">
     <h1>Hospital Inventory Management System</h1>
-    <p>Welcome back, <strong>{{ user.username }}</strong>. Select a module to continue.</p>
+    <p>Welcome back, <strong>{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}</strong>. Select a module to continue.</p>
 </div>
 
+<!-- Quick Action Bar: Edit Profile | Add New Record | Log Off -->
+<div class="quick-actions">
+    <a href="{% url 'edit_profile' %}" class="quick-action-link link-edit-profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Edit Profile
+    </a>
+    <a href="{% url 'billing_add' %}" class="quick-action-link link-add-record">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add New Record
+    </a>
+    <a href="{% url 'logout' %}" class="quick-action-link link-logoff">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Log Off
+    </a>
+</div>
+
+<!-- Existing Module Cards -->
 <div class="modules-grid">
 
     <a href="/admissions/" class="module-card">

@@ -1,5 +1,6 @@
 from django import forms
 from .models import Billing
+from django.contrib.auth.models import User
 
 class BillingForm(forms.ModelForm):
     class Meta:
@@ -8,3 +9,8 @@ class BillingForm(forms.ModelForm):
         widgets = {
             'bill_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
