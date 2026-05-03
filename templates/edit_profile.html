@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .form-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 500px; }
+    .form-title { font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.2px; }
+    .form-group input { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; background: #fafafa; transition: border-color 0.2s; box-sizing: border-box; }
+    .form-group input:focus { border-color: #0a8a8a; box-shadow: 0 0 0 3px rgba(10,138,138,0.1); background: white; }
+    .hint { font-size: 0.78rem; color: #aaa; margin-top: 0.3rem; }
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .btn { padding: 0.6rem 1.4rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
+    .btn-primary { background: #0a8a8a; color: white; }
+    .btn-primary:hover { background: #077070; }
+    .btn-secondary { background: #f0f0f0; color: #555; }
+    .btn-secondary:hover { background: #e0e0e0; }
+</style>
+
+<div class="form-card">
+    <div class="form-title">✏️ Edit Profile</div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" value="{{ user.username }}" disabled style="background:#f0f0f0; color:#999;">
+        </div>
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}">
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}">
+        </div>
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="password" placeholder="Leave blank to keep current password">
+            <div class="hint">Only fill this if you want to change your password.</div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

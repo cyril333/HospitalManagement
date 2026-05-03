@@ -130,3 +130,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 LOGIN_REDIRECT_URL = '/'
+
+# Session Management
+SESSION_COOKIE_AGE = 1800          # session expires after 30 minutes of inactivity
+SESSION_SAVE_EVERY_REQUEST = True  # reset timer on every request
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # session ends when browser closes
