@@ -2,6 +2,36 @@
 
 {% block content %}
 <style>
+    .top-nav {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .top-nav a {
+        padding: 0.45rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-default {
+        color: #555;
+        background: #f0f0f0;
+    }
+
+    .nav-default:hover { background: #e0e0e0; }
+
+    .nav-danger {
+        color: #c0392b;
+        background: #fef0f0;
+    }
+
+    .nav-danger:hover { background: #fcd0d0; }
+
     .hero {
         margin-bottom: 2.5rem;
     }
@@ -89,11 +119,20 @@
     .module-card:hover .arrow { color: #0a8a8a; }
 </style>
 
+<!-- Navigation Buttons -->
+<div class="top-nav">
+    <a href="{% url 'edit_profile' %}" class="nav-default">✏️ Edit Profile</a>
+    <a href="{% url 'medicine_add' %}" class="nav-default">➕ Add New Record</a>
+    <a href="{% url 'logout' %}" class="nav-danger">🚪 Log Off</a>
+</div>
+
+<!-- Hero -->
 <div class="hero">
     <h1>Hospital Inventory Management System</h1>
     <p>Welcome back, <strong>{{ user.username }}</strong>. Select a module to continue.</p>
 </div>
 
+<!-- Modules -->
 <div class="modules-grid">
 
     <a href="/admissions/" class="module-card">
