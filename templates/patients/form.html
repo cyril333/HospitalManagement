@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .form-card {
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 640px;
+    }
+    .form-card h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 1.5rem;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.55rem 0.85rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+        transition: border 0.2s;
+        background: white;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: #0a8a8a; }
+    .age-display {
+        padding: 0.55rem 0.85rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: #f5f5f5;
+        color: #333;
+        min-height: 36px;
+    }
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #0a8a8a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 1.5rem 0 0.75rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #e8e8e8;
+        grid-column: 1 / -1;
+    }
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    .btn {
+        padding: 0.6rem 1.4rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        transition: background 0.2s;
+    }
+    .btn-primary { background: #0a8a8a; color: white; }
+    .btn-primary:hover { background: #077070; }
+    .btn-secondary { background: #f0f0f0; color: #555; }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .errorlist {
+        color: #c0392b;
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+        padding-left: 1rem;
+    }
+</style>
+
+<div class="form-card">
+    <h2>{{ title }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <p class="section-label">Personal Information</p>
+
+            <div class="form-group full">
+                <label>Patient Name</label>
+                {{ form.patient_name }}
+                {{ form.patient_name.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                {{ form.gender }}
+                {{ form.gender.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Blood Type</label>
+                {{ form.blood_type }}
+                {{ form.blood_type.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Date of Birth</label>
+                {{ form.dateofbirth }}
+                {{ form.dateofbirth.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Age (auto-calculated)</label>
+                <div class="age-display" id="age-display">—</div>
+            </div>
+
+            <p class="section-label">Contact Information</p>
+
+            <div class="form-group">
+                <label>Contact Number</label>
+                {{ form.contact_number }}
+                {{ form.contact_number.errors }}
+            </div>
+
+            <div class="form-group full">
+                <label>Address</label>
+                {{ form.address }}
+                {{ form.address.errors }}
+            </div>
+
+            <p class="section-label">Emergency Contact</p>
+
+            <div class="form-group">
+                <label>Emergency Contact Name</label>
+                {{ form.emergency_contact_name }}
+                {{ form.emergency_contact_name.errors }}
+            </div>
+
+            <div class="form-group">
+                <label>Emergency Contact Number</label>
+                {{ form.emergency_contact_number }}
+                {{ form.emergency_contact_number.errors }}
+            </div>
+
+            <p class="section-label">Status</p>
+
+            <div class="form-group">
+                <label>Status</label>
+                {{ form.status }}
+                {{ form.status.errors }}
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url back_url %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function calculateAge(dob) {
+        const today = new Date();
+        const birth = new Date(dob);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+        return age;
+    }
+
+    const dobField = document.getElementById('id_dateofbirth');
+    const ageDisplay = document.getElementById('age-display');
+
+    // On page load (edit mode — prefill age)
+    if (dobField.value) {
+        ageDisplay.textContent = calculateAge(dobField.value) + ' years old';
+    }
+
+    // When user picks a date
+    dobField.addEventListener('change', function () {
+        if (this.value) {
+            ageDisplay.textContent = calculateAge(this.value) + ' years old';
+        } else {
+            ageDisplay.textContent = '—';
+        }
+    });
+</script>
+{% endblock %}
