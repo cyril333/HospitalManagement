@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    .card {
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 600px;
+    }
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.6rem 0.9rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #333;
+        background: #fafafa;
+        box-sizing: border-box;
+        transition: border 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #0a8a8a;
+        background: white;
+    }
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+    }
+    .btn {
+        padding: 0.55rem 1.4rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        transition: background 0.2s;
+    }
+    .btn-primary { background: #0a8a8a; color: white; }
+    .btn-primary:hover { background: #077070; }
+    .btn-secondary { background: #f0f0f0; color: #444; }
+    .btn-secondary:hover { background: #e0e0e0; }
+</style>
+
+<div class="page-header">
+    <h1>Add New Department</h1>
+</div>
+
+<div class="card">
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Record</button>
+            <a href="/departments/" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
