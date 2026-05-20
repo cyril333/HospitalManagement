@@ -1,225 +1,339 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard | MediTrack{% endblock %}
 
 {% block content %}
 <style>
-    .top-nav {
+    .dashboard-bg {
+        position: fixed;
+        inset: 0;
+        background:
+            linear-gradient(rgba(8, 26, 32, 0.42), rgba(8, 26, 32, 0.26)),
+            url("{% static 'images/hospital.jpg' %}") center center / cover no-repeat;
+        z-index: -2;
+    }
+
+    .dashboard-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dashboard-page {
+        position: relative;
+        min-height: calc(100vh - 2rem);
+        padding: 1.25rem;
+    }
+
+    .dashboard-top {
         display: flex;
-        justify-content: flex-end;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
-    .top-nav a {
-        padding: 0.45rem 1rem;
-        border-radius: 8px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
+    .glass-card {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
     }
 
-    .nav-default {
-        color: #555;
-        background: #f0f0f0;
+    .section-title,
+    .section-subtitle {
+        color: #ffffff;
+        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.22);
     }
 
-    .nav-default:hover { background: #e0e0e0; }
-
-    .nav-danger {
-        color: #c0392b;
-        background: #fef0f0;
+    .hero-card {
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
     }
 
-    .nav-danger:hover { background: #fcd0d0; }
-
-    .hero {
-        margin-bottom: 2.5rem;
+    .hero-card h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.45rem;
+        color: #ffffff;
     }
 
-    .hero h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.4rem;
-        letter-spacing: -0.4px;
+    .hero-card p {
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 1rem;
     }
 
-    .hero p {
-        color: #777;
-        font-size: 0.95rem;
-        font-weight: 400;
+    .hero-card strong {
+        color: #d9fffb;
     }
 
-    .hero p strong {
-        color: #0a8a8a;
-        font-weight: 600;
+    .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.04em;
     }
 
     .modules-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 1rem;
     }
 
     .module-card {
-        background: #ffffff;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
-        padding: 1.5rem;
-        text-decoration: none;
-        color: inherit;
+        padding: 1.4rem;
         display: flex;
         align-items: center;
-        gap: 1.25rem;
-        transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+        gap: 1rem;
+        transition: 0.25s ease;
+        text-decoration: none;
     }
 
     .module-card:hover {
-        box-shadow: 0 6px 20px rgba(10,138,138,0.1);
-        transform: translateY(-2px);
-        border-color: #0a8a8a;
+        transform: translateY(-4px);
+        border-color: rgba(255, 255, 255, 0.38);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+        background: rgba(255, 255, 255, 0.2);
     }
 
     .module-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 10px;
-        background: #e8f5f5;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #e9ffff;
         flex-shrink: 0;
-        color: #0a8a8a;
+        border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
-    .module-icon svg { width: 22px; height: 22px; }
+    .module-icon svg {
+        width: 24px;
+        height: 24px;
+    }
 
-    .module-info { flex: 1; }
-    .module-info h3 {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #1a1a1a;
+    .module-content {
+        flex: 1;
+    }
+
+    .module-content h3 {
+        font-size: 1.02rem;
+        font-weight: 800;
         margin-bottom: 0.25rem;
-        letter-spacing: -0.2px;
-    }
-    .module-info p {
-        font-size: 0.82rem;
-        color: #999;
-        line-height: 1.4;
-        font-weight: 400;
+        color: #ffffff;
     }
 
-    .arrow {
-        color: #ccc;
-        font-size: 1.1rem;
-        font-weight: 300;
-        transition: color 0.2s;
+    .module-content p {
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.88rem;
+        line-height: 1.45;
     }
 
-    .module-card:hover .arrow { color: #0a8a8a; }
+    .module-arrow {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-page {
+            padding: 1rem;
+        }
+
+        .dashboard-top {
+            flex-direction: column;
+        }
+
+        .hero-card h1 {
+            font-size: 1.55rem;
+        }
+    }
 </style>
 
-<!-- Navigation Buttons -->
-<div class="top-nav">
-    <a href="{% url 'edit_profile' %}" class="nav-default">✏️ Edit Profile</a>
-    <a href="{% url 'medicine_add' %}" class="nav-default">➕ Add New Record</a>
-    <a href="{% url 'logout' %}" class="nav-danger">🚪 Log Off</a>
-</div>
+<div class="dashboard-bg"></div>
 
-<!-- Hero -->
-<div class="hero">
-    <h1>Hospital Inventory Management System</h1>
-    <p>Welcome back, <strong>{{ user.username }}</strong>. Select a module to continue.</p>
-</div>
+<div class="dashboard-page">
+    <div class="dashboard-top">
+        <div>
+            <div class="section-title">Dashboard</div>
+            <div class="section-subtitle">Manage hospital records, inventory, consultations, admissions, and billing.</div>
+        </div>
+        <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+    </div>
 
-<!-- Modules -->
-<div class="modules-grid">
+    <div class="card glass-card hero-card">
+        <h1>Hospital Inventory Management System</h1>
+        <p>Welcome back, <strong>{{ user.username }}</strong>. Select a module to continue.</p>
 
-    <a href="/admissions/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
+        <div class="quick-actions">
+            <a href="{% url 'inventory_home' %}" class="btn btn-primary">Open Inventory</a>
+            <a href="{% url 'patient_list' %}" class="btn btn-secondary">View Patients</a>
+            <a href="{% url 'consultation_list' %}" class="btn btn-secondary">View Consultations</a>
         </div>
-        <div class="module-info">
-            <h3>Admissions</h3>
-            <p>Manage patient admissions and discharge records.</p>
-        </div>
-        <span class="arrow">›</span>
-    </a>
+    </div>
 
-    <a href="/billing/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="5" width="20" height="14" rx="2"/>
-                <line x1="2" y1="10" x2="22" y2="10"/>
-            </svg>
+    <div class="stats-grid">
+        <div class="card glass-card stat-card">
+            <div class="stat-label">System Areas</div>
+            <div class="stat-value">7</div>
         </div>
-        <div class="module-info">
-            <h3>Billing</h3>
-            <p>Track payments, invoices, and billing records.</p>
+        <div class="card glass-card stat-card">
+            <div class="stat-label">Core Roles</div>
+            <div class="stat-value">3</div>
         </div>
-        <span class="arrow">›</span>
-    </a>
+        <div class="card glass-card stat-card">
+            <div class="stat-label">Inventory Tracking</div>
+            <div class="stat-value">Medicines + Supplies</div>
+        </div>
+    </div>
 
-    <a href="/consultations/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12"/>
-                <path d="M2 6.92A19.5 19.5 0 0 1 6.93 4a19.79 19.79 0 0 1 3.07 8.63A2 2 0 0 1 8 14.82H5a2 2 0 0 1-2-2.18"/>
-            </svg>
-        </div>
-        <div class="module-info">
-            <h3>Consultations</h3>
-            <p>Record doctor consultations and prescriptions.</p>
-        </div>
-        <span class="arrow">›</span>
-    </a>
+    <div class="modules-grid">
+        <a href="{% url 'doctor_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 14c3.313 0 6-2.687 6-6S15.313 2 12 2 6 4.687 6 8s2.687 6 6 6z"/>
+                    <path d="M4 22a8 8 0 0 1 16 0"/>
+                    <path d="M19 8h2M20 7v2"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Doctors</h3>
+                <p>View added doctors, manage departments, and update doctor profiles.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
 
-    <a href="/departments/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2"/>
-                <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
-                <path d="M8 7V5a2 2 0 0 1 4 0v2"/>
-            </svg>
-        </div>
-        <div class="module-info">
-            <h3>Departments</h3>
-            <p>Manage hospital departments and staff assignments.</p>
-        </div>
-        <span class="arrow">›</span>
-    </a>
+        <a href="{% url 'nurse_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 14c3.313 0 6-2.687 6-6S15.313 2 12 2 6 4.687 6 8s2.687 6 6 6z"/>
+                    <path d="M4 22a8 8 0 0 1 16 0"/>
+                    <path d="M8 8h8"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Nurses</h3>
+                <p>View added nurses, manage assignments, and update nurse schedules.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
 
-    <a href="/inventory/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                <line x1="12" y1="22.08" x2="12" y2="12"/>
-            </svg>
-        </div>
-        <div class="module-info">
-            <h3>Inventory</h3>
-            <p>Track medical supplies, equipment, and stock levels.</p>
-        </div>
-        <span class="arrow">›</span>
-    </a>
+        <a href="{% url 'admission_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Admissions</h3>
+                <p>Manage patient admissions, room assignments, and discharge records.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
 
-    <a href="/patients/" class="module-card">
-        <div class="module-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-        </div>
-        <div class="module-info">
-            <h3>Patients</h3>
-            <p>View and manage patient information and records.</p>
-        </div>
-        <span class="arrow">›</span>
-    </a>
+        <a href="{% url 'billing_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Billing</h3>
+                <p>Track patient bills, payment status, and charge summaries.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
 
+        <a href="{% url 'consultation_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12"/>
+                    <path d="M2 6.92A19.5 19.5 0 0 1 6.93 4a19.79 19.79 0 0 1 3.07 8.63A2 2 0 0 1 8 14.82H5a2 2 0 0 1-2-2.18"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Consultations</h3>
+                <p>Record consultations, prescriptions, and medical records.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
+
+        <a href="{% url 'department_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+                    <path d="M8 7V5a2 2 0 0 1 4 0v2"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Departments</h3>
+                <p>Manage departments, rooms, and staff assignments.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
+
+        <a href="{% url 'inventory_home' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Inventory</h3>
+                <p>Track medicines, supplies, stock levels, and low inventory alerts.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
+
+        <a href="{% url 'patient_list' %}" class="card glass-card module-card">
+            <div class="module-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            <div class="module-content">
+                <h3>Patients</h3>
+                <p>View and manage patient information, records, and activity history.</p>
+            </div>
+            <span class="module-arrow">›</span>
+        </a>
+    </div>
 </div>
 {% endblock %}

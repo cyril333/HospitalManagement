@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block title %}Billing | MediTrack{% endblock %}
+
 {% block content %}
 <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
@@ -11,7 +13,7 @@
     .card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
     th { background: #f8f8f8; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e8e8e8; }
-    td { padding: 0.85rem 1rem; font-size: 0.875rem; color: #333; border-bottom: 1px solid #f0f0f0; }
+    td { padding: 0.85rem 1rem; font-size: 0.875rem; color: #333; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #fafafa; }
     .actions { display: flex; gap: 0.5rem; }
@@ -19,17 +21,22 @@
     .badge-paid { background: #f0faf0; color: #27ae60; }
     .badge-unpaid { background: #fef0f0; color: #c0392b; }
     .badge-partial { background: #fffbe6; color: #d4a017; }
+    .muted { color: #888; font-size: 0.82rem; }
 </style>
+
 <div class="page-header">
     <h1>Billing</h1>
     <a href="{% url 'billing_add' %}" class="btn btn-primary">+ New Bill</a>
 </div>
+
 <div class="card">
     <table>
         <thead>
             <tr>
                 <th>Bill ID</th>
                 <th>Patient</th>
+                <th>Admission</th>
+                <th>Room</th>
                 <th>Subtotal</th>
                 <th>Discount</th>
                 <th>Total Amount</th>
@@ -43,9 +50,28 @@
             <tr>
                 <td>{{ bill.bill_id }}</td>
                 <td><strong>{{ bill.patient.patient_name }}</strong></td>
-                <td>&#8369;{{ bill.subtotal }}</td>
-                <td>&#8369;{{ bill.discount }}</td>
-                <td><strong>&#8369;{{ bill.total_amount }}</strong></td>
+
+                <td>
+                    {% if bill.admission %}
+                        #{{ bill.admission.admission_id }}
+                    {% else %}
+                        <span class="muted">—</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if bill.admission and bill.admission.room %}
+                        <strong>{{ bill.admission.room.room_number }}</strong><br>
+                        <span class="muted">{{ bill.admission.room.room_type }} | ₱{{ bill.admission.room.daily_rate }}/day</span>
+                    {% else %}
+                        <span class="muted">No room</span>
+                    {% endif %}
+                </td>
+
+                <td>₱{{ bill.subtotal }}</td>
+                <td>{{ bill.discount }}%</td>
+                <td><strong>₱{{ bill.total_amount }}</strong></td>
+
                 <td>
                     <span class="badge
                         {% if bill.payment_status == 'Paid' %}badge-paid
@@ -54,7 +80,9 @@
                         {{ bill.payment_status }}
                     </span>
                 </td>
+
                 <td>{{ bill.bill_date }}</td>
+
                 <td>
                     <div class="actions">
                         <a href="{% url 'billing_edit' bill.pk %}" class="btn btn-secondary">Edit</a>
@@ -63,7 +91,9 @@
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="8" style="text-align:center; color:#999; padding:2rem;">No bills found.</td></tr>
+            <tr>
+                <td colspan="10" style="text-align:center; color:#999; padding:2rem;">No bills found.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

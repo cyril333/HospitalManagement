@@ -1,71 +1,125 @@
 {% extends 'base.html' %}
+{% block title %}Medicine Inventory | MediTrack{% endblock %}
+
 {% block content %}
 <style>
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.3px; }
-    .btn { padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
-    .btn-primary { background: #0a8a8a; color: white; }
-    .btn-primary:hover { background: #077070; }
-    .btn-secondary { background: #f0f0f0; color: #444; }
-    .btn-secondary:hover { background: #e0e0e0; }
-    .btn-danger { background: #fef0f0; color: #c0392b; border: 1px solid #fcd0d0; }
-    .btn-danger:hover { background: #fcd0d0; }
-    .card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    th { background: #f8f8f8; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e8e8e8; }
-    td { padding: 0.85rem 1rem; font-size: 0.875rem; color: #333; border-bottom: 1px solid #f0f0f0; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #fafafa; }
-    .actions { display: flex; gap: 0.5rem; }
-    .badge { padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .badge-low { background: #fef0f0; color: #c0392b; }
-    .badge-ok { background: #f0faf0; color: #27ae60; }
+    .filter-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 0.75rem;
+        align-items: end;
+    }
+
+    @media (max-width: 900px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="page-header">
-    <h1>Medicine Inventory</h1>
-    <a href="{% url 'medicine_add' %}" class="btn btn-primary">+ Add Medicine</a>
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Medicine Inventory</div>
+        <div class="section-subtitle">Track medicine stock, price, and expiry information.</div>
+    </div>
+    <a href="{% url 'medicine_add' %}" class="btn btn-primary">Add Medicine</a>
 </div>
 
-<div class="card">
-    <table>
-        <thead>
-            <tr>
-                <th>Medicine Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th>Expiry Date</th>
-                <th>Unit Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for medicine in medicines %}
-            <tr>
-                <td><strong>{{ medicine.medicine_name }}</strong></td>
-                <td>{{ medicine.category }}</td>
-                <td>
-                    <span class="badge {% if medicine.quantity < 10 %}badge-low{% else %}badge-ok{% endif %}">
-                        {{ medicine.quantity }}
-                    </span>
-                </td>
-                <td>{{ medicine.unit }}</td>
-                <td>{{ medicine.expiry_date|default:"—" }}</td>
-                <td>&#8369;{{ medicine.unit_price }}</td>
-                <td>
-                    <div class="actions">
-                        <a href="{% url 'medicine_edit' medicine.pk %}" class="btn btn-secondary">Edit</a>
-                        <a href="{% url 'medicine_delete' medicine.pk %}" class="btn btn-danger">Delete</a>
-                    </div>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" style="text-align:center; color:#999; padding: 2rem;">No medicines found. Add one to get started.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card filter-card">
+    <form method="get" class="filter-grid">
+        <div class="form-group">
+            <label for="search">Search</label>
+            <input type="text" name="search" id="search" value="{{ selected_search }}" placeholder="Search by medicine name">
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                <option value="">All Categories</option>
+                {% for item in categories %}
+                    <option value="{{ item }}" {% if selected_category == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock Status</label>
+            <select name="stock" id="stock">
+                <option value="">All</option>
+                <option value="ok" {% if selected_stock == 'ok' %}selected{% endif %}>In Stock</option>
+                <option value="low" {% if selected_stock == 'low' %}selected{% endif %}>Low Stock</option>
+                <option value="out" {% if selected_stock == 'out' %}selected{% endif %}>Out of Stock</option>
+            </select>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{% url 'medicine_list' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Stock Status</th>
+                    <th>Unit</th>
+                    <th>Expiry Date</th>
+                    <th>Expiry Status</th>
+                    <th>Unit Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicine in medicines %}
+                    <tr>
+                        <td><strong>{{ medicine.medicine_name }}</strong></td>
+                        <td>{{ medicine.category }}</td>
+                        <td>{{ medicine.quantity }}</td>
+                        <td>
+                            {% if medicine.stock_status == 'Out of Stock' %}
+                                <span class="badge badge-danger">{{ medicine.stock_status }}</span>
+                            {% elif medicine.stock_status == 'Low Stock' %}
+                                <span class="badge badge-warning">{{ medicine.stock_status }}</span>
+                            {% else %}
+                                <span class="badge badge-success">{{ medicine.stock_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ medicine.unit }}</td>
+                        <td>{{ medicine.expiry_date|default:"—" }}</td>
+                        <td>
+                            {% if medicine.expiry_status == 'Expired' %}
+                                <span class="badge badge-danger">{{ medicine.expiry_status }}</span>
+                            {% elif medicine.expiry_status == 'Expiring Soon' %}
+                                <span class="badge badge-warning">{{ medicine.expiry_status }}</span>
+                            {% else %}
+                                <span class="badge badge-neutral">{{ medicine.expiry_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>₱{{ medicine.unit_price }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'medicine_edit' medicine.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'medicine_delete' medicine.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">No medicines found. Add a medicine record to get started.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Prescription Items | MediTrack{% endblock %}
+
+{% block content %}
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Prescription Items</div>
+        <div class="section-subtitle">Manage medicines assigned to each prescription.</div>
+    </div>
+    <div class="actions">
+        <a href="{% url 'prescription_list' %}" class="btn btn-secondary">Back to Prescriptions</a>
+        <a href="{% url 'prescription_item_add' %}" class="btn btn-primary">Add Prescription Item</a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Prescription</th>
+                    <th>Patient</th>
+                    <th>Medicine</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>#{{ item.prescription_item_id }}</td>
+                        <td>#{{ item.prescription.prescription_id }}</td>
+                        <td>{{ item.prescription.patient.patient_name }}</td>
+                        <td>{{ item.medicine.medicine_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₱{{ item.unit_price }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'prescription_item_edit' item.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'prescription_item_delete' item.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">No prescription items found.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

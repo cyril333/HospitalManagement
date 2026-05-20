@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+{% block title %}{{ title }} | MediTrack{% endblock %}
+
 {% block content %}
 <style>
-    .form-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 600px; }
+    .form-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 700px; }
     .form-title { font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.5rem; letter-spacing: -0.3px; }
     .form-group { margin-bottom: 1.25rem; }
     .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.2px; }
@@ -13,21 +15,316 @@
     .btn-primary:hover { background: #077070; }
     .btn-secondary { background: #f0f0f0; color: #555; }
     .btn-secondary:hover { background: #e0e0e0; }
+    .field-error { margin-top: 0.35rem; color: #c0392b; font-size: 0.82rem; font-weight: 600; }
+    .help-text { display: block; margin-top: 0.35rem; color: #777; font-size: 0.82rem; }
+    .billing-preview {
+        margin-top: 1.5rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid #e8e8e8;
+        border-radius: 10px;
+        background: #fcfcfc;
+    }
+    .billing-preview-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .billing-preview-note {
+        margin-bottom: 0.9rem;
+        padding: 0.85rem 0.95rem;
+        border-radius: 8px;
+        background: #fff8e8;
+        border: 1px solid #f0dfb1;
+        color: #7a5d12;
+        font-size: 0.86rem;
+        line-height: 1.5;
+    }
+    .billing-preview-note.final {
+        background: #eaf8ee;
+        border-color: #bfe3c8;
+        color: #25613a;
+    }
+    .billing-preview-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.35rem 0;
+        font-size: 0.9rem;
+        color: #333;
+    }
+    .billing-preview-row strong {
+        color: #111;
+    }
+    .billing-preview-divider {
+        border-top: 1px solid #ececec;
+        margin: 0.45rem 0;
+    }
+    .hidden {
+        display: none;
+    }
 </style>
+
 <div class="form-card">
     <div class="form-title">{{ title }}</div>
+
+    {% if form.non_field_errors %}
+        <div class="field-error" style="margin-bottom:1rem;">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <form method="POST">
         {% csrf_token %}
+
         {% for field in form %}
-        <div class="form-group">
-            <label>{{ field.label }}</label>
+        <div class="form-group{% if field.name == 'admitted_out' %} hidden{% endif %}"{% if field.name == 'admitted_out' %} id="admitted-out-group"{% endif %}>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
+
+            {% if field.help_text %}
+                <span class="help-text">{{ field.help_text }}</span>
+            {% endif %}
+
+            {% for error in field.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
         </div>
         {% endfor %}
+
+        <div class="billing-preview">
+            <div class="billing-preview-title">Bill Breakdown</div>
+
+            <div id="billing-preview-note" class="billing-preview-note">
+                This bill is currently tentative because the patient may still be admitted. Final admission charges will be locked only after payment is marked as Paid and discharge date/time is entered.
+            </div>
+
+            <div class="billing-preview-row">
+                <span>Admission days</span>
+                <strong id="preview-days">0</strong>
+            </div>
+            <div class="billing-preview-row">
+                <span>Doctor charge</span>
+                <strong id="preview-doctor-charge">₱0.00</strong>
+            </div>
+            <div class="billing-preview-row">
+                <span>Room charge</span>
+                <strong id="preview-room-charge">₱0.00</strong>
+            </div>
+            <div class="billing-preview-row">
+                <span>Prescription charge</span>
+                <strong id="preview-prescription-charge">₱0.00</strong>
+            </div>
+
+            <div class="billing-preview-divider"></div>
+
+            <div class="billing-preview-row">
+                <span>Subtotal</span>
+                <strong id="preview-subtotal">₱0.00</strong>
+            </div>
+            <div class="billing-preview-row">
+                <span>Discount</span>
+                <strong id="preview-discount">0%</strong>
+            </div>
+            <div class="billing-preview-row">
+                <span>Total amount</span>
+                <strong id="preview-total">₱0.00</strong>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save</button>
             <a href="{% url back_url %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const patientField = document.getElementById('id_patient');
+    const admissionField = document.getElementById('id_admission');
+    const prescriptionField = document.getElementById('id_prescription');
+    const discountField = document.getElementById('id_discount');
+    const subtotalField = document.getElementById('id_subtotal');
+    const totalField = document.getElementById('id_total_amount');
+    const paymentStatusField = document.getElementById('id_payment_status');
+    const admittedOutField = document.getElementById('id_admitted_out');
+    const admittedOutGroup = document.getElementById('admitted-out-group');
+
+    const previewDays = document.getElementById('preview-days');
+    const previewDoctorCharge = document.getElementById('preview-doctor-charge');
+    const previewRoomCharge = document.getElementById('preview-room-charge');
+    const previewPrescriptionCharge = document.getElementById('preview-prescription-charge');
+    const previewSubtotal = document.getElementById('preview-subtotal');
+    const previewDiscount = document.getElementById('preview-discount');
+    const previewTotal = document.getElementById('preview-total');
+    const previewNote = document.getElementById('billing-preview-note');
+
+    if (!patientField || !discountField || !subtotalField || !totalField || !paymentStatusField) return;
+
+    const billingData = JSON.parse('{{ billing_data_json|escapejs }}');
+
+    function formatPeso(value) {
+        return '₱' + (parseFloat(value) || 0).toFixed(2);
+    }
+
+    function filterOptions(selectElement, sourceData) {
+        if (!selectElement || !patientField) return;
+
+        const patientId = patientField.value;
+
+        Array.from(selectElement.options).forEach(option => {
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            const item = sourceData[option.value];
+            option.hidden = !!(patientId && item && item.patient_id !== patientId);
+
+            if (option.hidden && option.selected) {
+                selectElement.value = '';
+            }
+        });
+    }
+
+    function calculateDays(admittedIn, admittedOut) {
+        if (!admittedIn || !admittedOut) return 0;
+
+        const start = new Date(admittedIn);
+        const end = new Date(admittedOut);
+
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+
+        let diff = end - start;
+        if (diff <= 0) return 1;
+
+        const dayMs = 24 * 60 * 60 * 1000;
+        let days = Math.floor(diff / dayMs);
+
+        if (diff % dayMs > 0) {
+            days += 1;
+        }
+
+        if (days <= 0) days = 1;
+        return days;
+    }
+
+    function toggleAdmittedOutField() {
+        const needsAdmittedOut = paymentStatusField.value === 'Paid' && admissionField && admissionField.value;
+
+        if (admittedOutGroup) {
+            admittedOutGroup.classList.toggle('hidden', !needsAdmittedOut);
+        }
+
+        if (!needsAdmittedOut && admittedOutField) {
+            admittedOutField.value = '';
+        }
+    }
+
+    function updateBill() {
+        let subtotal = 0;
+        let days = 0;
+        let doctorCharge = 0;
+        let roomCharge = 0;
+        let prescriptionCharge = 0;
+
+        const discount = parseFloat(discountField.value) || 0;
+        const admissionId = admissionField ? admissionField.value : '';
+        const prescriptionId = prescriptionField ? prescriptionField.value : '';
+        const paymentStatus = paymentStatusField ? paymentStatusField.value : 'Unpaid';
+
+        if (admissionId && billingData.admissions[admissionId]) {
+            const admissionData = billingData.admissions[admissionId];
+            const doctorRate = parseFloat(admissionData.doctor_rate) || 0;
+            const roomRate = parseFloat(admissionData.room_rate) || 0;
+
+            if (paymentStatus === 'Paid' && admittedOutField && admittedOutField.value) {
+                days = calculateDays(admissionData.admitted_in, admittedOutField.value);
+                doctorCharge = doctorRate * days;
+                roomCharge = roomRate * days;
+            } else {
+                days = parseInt(admissionData.days || 0, 10);
+                doctorCharge = parseFloat(admissionData.doctor_charge) || 0;
+                roomCharge = parseFloat(admissionData.room_charge) || 0;
+            }
+
+            subtotal += doctorCharge + roomCharge;
+        }
+
+        if (prescriptionId && billingData.prescriptions[prescriptionId]) {
+            prescriptionCharge = parseFloat(billingData.prescriptions[prescriptionId].charge) || 0;
+            subtotal += prescriptionCharge;
+        }
+
+        const discountAmount = subtotal * (discount / 100);
+        const total = subtotal - discountAmount;
+
+        subtotalField.value = subtotal.toFixed(2);
+        totalField.value = total >= 0 ? total.toFixed(2) : '0.00';
+
+        if (previewDays) previewDays.textContent = days;
+        if (previewDoctorCharge) previewDoctorCharge.textContent = formatPeso(doctorCharge);
+        if (previewRoomCharge) previewRoomCharge.textContent = formatPeso(roomCharge);
+        if (previewPrescriptionCharge) previewPrescriptionCharge.textContent = formatPeso(prescriptionCharge);
+        if (previewSubtotal) previewSubtotal.textContent = formatPeso(subtotal);
+        if (previewDiscount) previewDiscount.textContent = discount.toFixed(2).replace(/\.00$/, '') + '%';
+        if (previewTotal) previewTotal.textContent = formatPeso(total >= 0 ? total : 0);
+
+        if (previewNote) {
+            if (admissionId && billingData.admissions[admissionId]) {
+                if (paymentStatus === 'Paid') {
+                    if (admittedOutField && admittedOutField.value) {
+                        previewNote.classList.add('final');
+                        previewNote.textContent = 'This bill is now using the entered discharge date/time. Admission charges shown below are final and ready to be saved.';
+                    } else {
+                        previewNote.classList.remove('final');
+                        previewNote.textContent = 'To finalize this bill, enter the discharge date/time. The bill breakdown will update automatically once admitted out is provided.';
+                    }
+                } else if (billingData.admissions[admissionId].is_tentative) {
+                    previewNote.classList.remove('final');
+                    previewNote.textContent = 'This bill is currently tentative because the patient may still be admitted. Final admission charges will be locked only after payment is marked as Paid and discharge date/time is entered.';
+                } else {
+                    previewNote.classList.add('final');
+                    previewNote.textContent = 'This bill is already based on a saved discharge date/time, so the admission charges are final.';
+                }
+            } else {
+                previewNote.classList.remove('final');
+                previewNote.textContent = 'Select an admission to calculate any admission-related charges.';
+            }
+        }
+    }
+
+    function handlePatientChange() {
+        filterOptions(admissionField, billingData.admissions);
+        filterOptions(prescriptionField, billingData.prescriptions);
+        toggleAdmittedOutField();
+        updateBill();
+    }
+
+    if (patientField) patientField.addEventListener('change', handlePatientChange);
+    if (admissionField) admissionField.addEventListener('change', function () {
+        toggleAdmittedOutField();
+        updateBill();
+    });
+    if (prescriptionField) prescriptionField.addEventListener('change', updateBill);
+    if (discountField) discountField.addEventListener('input', updateBill);
+    if (paymentStatusField) paymentStatusField.addEventListener('change', function () {
+        toggleAdmittedOutField();
+        updateBill();
+    });
+    if (admittedOutField) admittedOutField.addEventListener('change', updateBill);
+    if (admittedOutField) admittedOutField.addEventListener('input', updateBill);
+
+    handlePatientChange();
+    toggleAdmittedOutField();
+    updateBill();
+});
+</script>
 {% endblock %}

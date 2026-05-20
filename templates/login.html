@@ -1,107 +1,71 @@
 {% extends 'base.html' %}
+{% block title %}Sign In | MediTrack{% endblock %}
 
 {% block content %}
 <style>
     .login-wrapper {
+        min-height: calc(100vh - 180px);
         display: flex;
-        justify-content: center;
         align-items: center;
-        min-height: 70vh;
+        justify-content: center;
     }
 
     .login-card {
-        background: #ffffff;
-        border: 1px solid #e8e8e8;
-        border-radius: 16px;
-        padding: 2.5rem 2rem;
         width: 100%;
-        max-width: 400px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        max-width: 430px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfeff 100%);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: var(--shadow);
     }
 
     .login-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
 
     .login-logo {
-        display: flex;
+        display: inline-flex;
         align-items: center;
+        gap: 0.75rem;
         justify-content: center;
-        gap: 0.5rem;
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #0a8a8a;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--primary);
         margin-bottom: 0.5rem;
-        letter-spacing: -0.3px;
+        letter-spacing: -0.03em;
     }
 
-    .login-logo svg { width: 28px; height: 28px; }
+    .login-logo svg {
+        width: 32px;
+        height: 32px;
+    }
 
     .login-header p {
-        color: #999;
-        font-size: 0.875rem;
-        font-weight: 400;
+        color: var(--muted);
+        font-size: 0.95rem;
     }
 
-    .form-group { margin-bottom: 1.25rem; }
-
-    .form-group label {
-        display: block;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: #444;
-        margin-bottom: 0.4rem;
-        letter-spacing: 0.2px;
-        text-transform: uppercase;
+    .password-wrap {
+        position: relative;
     }
 
-    .form-group input {
-        width: 100%;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-family: 'Inter', sans-serif;
-        outline: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        background: #fafafa;
-        color: #2d2d2d;
+    .password-wrap input {
+        padding-right: 3rem;
     }
 
-    .form-group input:focus {
-        border-color: #0a8a8a;
-        box-shadow: 0 0 0 3px rgba(10,138,138,0.1);
-        background: #ffffff;
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 0.75rem;
-        background: #0a8a8a;
-        color: white;
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 0.8rem;
+        transform: translateY(-50%);
+        background: transparent;
         border: none;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        font-family: 'Inter', sans-serif;
+        color: var(--muted);
         cursor: pointer;
-        transition: background 0.2s;
-        margin-top: 0.5rem;
-        letter-spacing: 0.2px;
-    }
-
-    .btn-submit:hover { background: #077070; }
-
-    .error-msg {
-        background: #fff5f5;
-        border: 1px solid #fcd0d0;
-        color: #c0392b;
-        padding: 0.65rem 0.9rem;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        margin-bottom: 1.25rem;
-        font-weight: 500;
+        font-weight: 700;
+        font-size: 0.82rem;
     }
 </style>
 
@@ -119,22 +83,45 @@
             <p>Sign in to your account to continue</p>
         </div>
 
-        {% if form.errors %}
-            <div class="error-msg">Invalid username or password. Please try again.</div>
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
         {% endif %}
 
         <form method="POST">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">Show</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit" class="btn-submit">Sign In</button>
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const password = document.getElementById('password');
+        const btn = document.querySelector('.toggle-password');
+        if (password.type === 'password') {
+            password.type = 'text';
+            btn.textContent = 'Hide';
+        } else {
+            password.type = 'password';
+            btn.textContent = 'Show';
+        }
+    }
+</script>
 {% endblock %}

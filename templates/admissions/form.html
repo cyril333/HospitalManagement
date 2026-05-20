@@ -1,7 +1,11 @@
+<!-- templates/admissions/form.html -->
+
 {% extends 'base.html' %}
+{% block title %}{{ title }} | MediTrack{% endblock %}
+
 {% block content %}
 <style>
-    .form-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 600px; }
+    .form-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 650px; }
     .form-title { font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.5rem; letter-spacing: -0.3px; }
     .form-group { margin-bottom: 1.25rem; }
     .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #444; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.2px; }
@@ -13,21 +17,71 @@
     .btn-primary:hover { background: #077070; }
     .btn-secondary { background: #f0f0f0; color: #555; }
     .btn-secondary:hover { background: #e0e0e0; }
+    .field-error { margin-top: 0.35rem; color: #c0392b; font-size: 0.82rem; font-weight: 600; }
+    .help-text { display: block; margin-top: 0.35rem; color: #777; font-size: 0.82rem; }
+    .hidden-field { display: none; }
 </style>
+
 <div class="form-card">
     <div class="form-title">{{ title }}</div>
+
+    {% if form.non_field_errors %}
+        <div class="field-error" style="margin-bottom:1rem;">
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <form method="POST">
         {% csrf_token %}
         {% for field in form %}
-        <div class="form-group">
-            <label>{{ field.label }}</label>
+        <div class="form-group{% if field.name == 'admitted_out' %} hidden-field{% endif %}"{% if field.name == 'admitted_out' %} id="admitted-out-group"{% endif %}>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
+
+            {% if field.help_text %}
+                <span class="help-text">{{ field.help_text }}</span>
+            {% endif %}
+
+            {% for error in field.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
         </div>
         {% endfor %}
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save</button>
             <a href="{% url back_url %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const statusField = document.getElementById('id_status');
+    const admittedOutGroup = document.getElementById('admitted-out-group');
+    const admittedOutField = document.getElementById('id_admitted_out');
+
+    function toggleAdmittedOut() {
+        if (!admittedOutGroup || !statusField) return;
+
+        const shouldShow = statusField.value === 'Discharged';
+
+        admittedOutGroup.classList.toggle('hidden-field', !shouldShow);
+
+        if (!shouldShow && admittedOutField) {
+            admittedOutField.value = '';
+        }
+    }
+
+    toggleAdmittedOut();
+
+    if (statusField) {
+        statusField.addEventListener('change', toggleAdmittedOut);
+    }
+});
+</script>
 {% endblock %}

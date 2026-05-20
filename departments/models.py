@@ -11,12 +11,27 @@ class Department(models.Model):
     class Meta:
         db_table = 'department'
 
+
 class Room(models.Model):
-    STATUS_CHOICES = [('Available', 'Available'), ('Occupied', 'Occupied'), ('Maintenance', 'Maintenance')]
+    STATUS_CHOICES = [
+        ('Available', 'Available'),
+        ('Occupied', 'Occupied'),
+        ('Maintenance', 'Maintenance'),
+    ]
+
+    ROOM_TYPE_CHOICES = [
+        ('Ward', 'Ward'),
+        ('Private', 'Private'),
+        ('Semi-Private', 'Semi-Private'),
+        ('ICU', 'ICU'),
+        ('Emergency', 'Emergency'),
+        ('Operating', 'Operating'),
+    ]
+
     room_id = models.AutoField(primary_key=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     room_number = models.CharField(max_length=50, unique=True)
-    room_type = models.CharField(max_length=100)
+    room_type = models.CharField(max_length=100, choices=ROOM_TYPE_CHOICES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Available')
     daily_rate = models.DecimalField(max_digits=10, decimal_places=2)
 

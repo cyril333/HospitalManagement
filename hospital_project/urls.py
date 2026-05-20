@@ -6,13 +6,18 @@ from accounts import views as account_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', login_required(
-        TemplateView.as_view(template_name='index.html'),
-        login_url='/login/'
-    ), name='index'),
+    path(
+        '',
+        login_required(
+            TemplateView.as_view(template_name='index.html'),
+            login_url='/login/'
+        ),
+        name='index'
+    ),
     path('login/', account_views.login_view, name='login'),
     path('logout/', account_views.logout_view, name='logout'),
     path('edit-profile/', account_views.edit_profile, name='edit_profile'),
+
     path('accounts/', include('accounts.urls')),
     path('departments/', include('departments.urls')),
     path('patients/', include('patients.urls')),
