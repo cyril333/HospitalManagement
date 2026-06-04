@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Doctors | MediTrack{% endblock %}
+
+{% block content %}
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Doctors</div>
+        <div class="section-subtitle">Manage doctor assignments, departments, and rates.</div>
+    </div>
+    <a href="{% url 'doctor_add' %}" class="btn btn-primary">Add Doctor</a>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Department</th>
+                    <th>Specialization</th>
+                    <th>License No.</th>
+                    <th>Daily Rate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doctor in doctors %}
+                    <tr>
+                        <td>{{ doctor.user.username }}</td>
+                        <td>{{ doctor.user.get_full_name|default:doctor.user.username }}</td>
+                        <td>{{ doctor.department.department_name }}</td>
+                        <td>{{ doctor.specialization }}</td>
+                        <td>{{ doctor.license_number }}</td>
+                        <td>₱{{ doctor.daily_rate }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'doctor_edit' doctor.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'doctor_delete' doctor.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">No doctor records found yet.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

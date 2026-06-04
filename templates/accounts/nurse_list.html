@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Nurses | MediTrack{% endblock %}
+
+{% block content %}
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Nurses</div>
+        <div class="section-subtitle">Manage nurse assignments, departments, and schedules.</div>
+    </div>
+    <a href="{% url 'nurse_add' %}" class="btn btn-primary">Add Nurse</a>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Department</th>
+                    <th>Shift Schedule</th>
+                    <th>Contact Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nurse in nurses %}
+                    <tr>
+                        <td>{{ nurse.user.username }}</td>
+                        <td>{{ nurse.user.get_full_name|default:nurse.user.username }}</td>
+                        <td>{{ nurse.department.department_name }}</td>
+                        <td>{{ nurse.shift_schedule }}</td>
+                        <td>{{ nurse.contact_number }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'nurse_edit' nurse.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'nurse_delete' nurse.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">No nurse records found yet.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

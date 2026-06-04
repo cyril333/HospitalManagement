@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block title %}Admissions | MediTrack{% endblock %}
+
 {% block content %}
 <style>
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
@@ -20,10 +22,12 @@
     .badge-discharged { background: #e8f0fe; color: #1a73e8; }
     .badge-cancelled { background: #fef0f0; color: #c0392b; }
 </style>
+
 <div class="page-header">
     <h1>Admissions</h1>
     <a href="{% url 'admission_add' %}" class="btn btn-primary">+ New Admission</a>
 </div>
+
 <div class="card">
     <table>
         <thead>
@@ -35,6 +39,7 @@
                 <th>Admitted In</th>
                 <th>Admitted Out</th>
                 <th>Status</th>
+                <th>Billing</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -48,12 +53,18 @@
                 <td>{{ admission.admitted_in }}</td>
                 <td>{{ admission.admitted_out|default:"—" }}</td>
                 <td>
-                    <span class="badge
-                        {% if admission.status == 'Active' %}badge-active
-                        {% elif admission.status == 'Discharged' %}badge-discharged
-                        {% else %}badge-cancelled{% endif %}">
+                    <span class="badge {% if admission.status == 'Active' %}badge-active{% elif admission.status == 'Discharged' %}badge-discharged{% else %}badge-cancelled{% endif %}">
                         {{ admission.status }}
                     </span>
+                </td>
+                <td>
+                    {% with bill=admission.billing_set.first %}
+                        {% if bill %}
+                            {{ bill.payment_status }}
+                        {% else %}
+                            No Bill
+                        {% endif %}
+                    {% endwith %}
                 </td>
                 <td>
                     <div class="actions">
@@ -63,7 +74,7 @@
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="8" style="text-align:center; color:#999; padding:2rem;">No admissions found.</td></tr>
+            <tr><td colspan="9" style="text-align:center; color:#999; padding:2rem;">No admissions found.</td></tr>
             {% endfor %}
         </tbody>
     </table>
