@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Sign In | MediTrack{% endblock %}
+
+{% block content %}
+<style>
+    .login-wrapper {
+        min-height: calc(100vh - 180px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 430px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfeff 100%);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: var(--shadow);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+
+    .login-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        justify-content: center;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.03em;
+    }
+
+    .login-logo svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .login-header p {
+        color: var(--muted);
+        font-size: 0.95rem;
+    }
+
+    .password-wrap {
+        position: relative;
+    }
+
+    .password-wrap input {
+        padding-right: 3rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 0.8rem;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.82rem;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="28" height="28" rx="7" fill="#0a8a8a"/>
+                    <path d="M7 9h4v6a3.5 3.5 0 0 0 7 0v-1a1.5 1.5 0 0 1 3 0v2.5A5.5 5.5 0 0 1 15.5 22" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M9 6.5v2.5M11 6.5v2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                MediTrack
+            </div>
+            <p>Sign in to your account to continue</p>
+        </div>
+
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">Show</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const password = document.getElementById('password');
+        const btn = document.querySelector('.toggle-password');
+        if (password.type === 'password') {
+            password.type = 'text';
+            btn.textContent = 'Hide';
+        } else {
+            password.type = 'password';
+            btn.textContent = 'Show';
+        }
+    }
+</script>
+{% endblock %}

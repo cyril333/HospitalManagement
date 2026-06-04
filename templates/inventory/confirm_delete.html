@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .delete-card { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 2rem; max-width: 480px; }
+    .delete-card h2 { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.75rem; }
+    .delete-card p { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+    .delete-card p strong { color: #c0392b; }
+    .form-actions { display: flex; gap: 0.75rem; }
+    .btn { padding: 0.6rem 1.4rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
+    .btn-danger { background: #c0392b; color: white; }
+    .btn-danger:hover { background: #a93226; }
+    .btn-secondary { background: #f0f0f0; color: #555; }
+    .btn-secondary:hover { background: #e0e0e0; }
+</style>
+
+<div class="delete-card">
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete <strong>{{ item }}</strong>? This action cannot be undone.</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

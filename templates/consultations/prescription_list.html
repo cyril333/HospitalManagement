@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Prescriptions | MediTrack{% endblock %}
+
+{% block content %}
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Prescriptions</div>
+        <div class="section-subtitle">Manage prescription records for patients and doctors.</div>
+    </div>
+    <div class="actions">
+        <a href="{% url 'consultation_list' %}" class="btn btn-secondary">Back to Consultations</a>
+        <a href="{% url 'prescription_add' %}" class="btn btn-primary">Add Prescription</a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Total Items</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescription in prescriptions %}
+                    <tr>
+                        <td>#{{ prescription.prescription_id }}</td>
+                        <td>{{ prescription.patient.patient_name }}</td>
+                        <td>{{ prescription.doctor.user.get_full_name|default:prescription.doctor.user.username }}</td>
+                        <td>{{ prescription.prescription_date }}</td>
+                        <td>{{ prescription.total_items }}</td>
+                        <td>{{ prescription.remarks|default:"—" }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'prescription_edit' prescription.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'prescription_delete' prescription.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">No prescriptions found.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

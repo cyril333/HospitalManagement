@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.3px; }
+    .page-header p { color: #888; font-size: 0.9rem; margin-top: 0.25rem; }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+        box-shadow: 0 6px 20px rgba(10,138,138,0.10);
+        transform: translateY(-2px);
+        border-color: #0a8a8a;
+    }
+
+    .card h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+        color: #1a1a1a;
+    }
+
+    .card p {
+        font-size: 0.88rem;
+        color: #777;
+        margin-bottom: 1rem;
+    }
+
+    .count {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0a8a8a;
+    }
+
+    .meta {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 0.35rem;
+    }
+</style>
+
+<div class="page-header">
+    <h1>Billing</h1>
+    <p>Manage hospital bills, payment status, and patient billing records.</p>
+</div>
+
+<div class="grid">
+    <a href="{% url 'billing_list' %}" class="card">
+        <h3>All Bills</h3>
+        <div class="count">{{ bills_count }}</div>
+        <div class="meta">Total billing records</div>
+        <p>View, edit, and manage all patient bills.</p>
+    </a>
+
+    <a href="{% url 'billing_add' %}" class="card">
+        <h3>Create Bill</h3>
+        <div class="count">+</div>
+        <div class="meta">New billing record</div>
+        <p>Create a new bill for a patient admission, consultation, or prescription.</p>
+    </a>
+
+    <a href="{% url 'billing_list' %}" class="card">
+        <h3>Unpaid / Partial</h3>
+        <div class="count">{{ unpaid_count }}</div>
+        <div class="meta">Pending collections</div>
+        <p>Track unpaid and partially paid bills for follow-up.</p>
+    </a>
+</div>
+{% endblock %}

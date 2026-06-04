@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Consultations | MediTrack{% endblock %}
+
+{% block content %}
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Consultations</div>
+        <div class="section-subtitle">Manage consultations, prescriptions, prescription items, and medical records.</div>
+    </div>
+    <div class="actions">
+        <a href="{% url 'consultation_add' %}" class="btn btn-primary">Add Consultation</a>
+        <a href="{% url 'prescription_list' %}" class="btn btn-secondary">View Prescriptions</a>
+        <a href="{% url 'prescription_add' %}" class="btn btn-secondary">Add Prescription</a>
+        <a href="{% url 'prescription_item_list' %}" class="btn btn-secondary">View Prescription Items</a>
+        <a href="{% url 'prescription_item_add' %}" class="btn btn-secondary">Add Prescription Item</a>
+        <a href="{% url 'medical_record_list' %}" class="btn btn-secondary">View Medical Records</a>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Prescription</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consultation in consultations %}
+                    <tr>
+                        <td>#{{ consultation.consultation_id }}</td>
+                        <td>{{ consultation.patient.patient_name }}</td>
+                        <td>{{ consultation.doctor.user.get_full_name|default:consultation.doctor.user.username }}</td>
+                        <td>
+                            {% if consultation.prescription %}
+                                #{{ consultation.prescription.prescription_id }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>{{ consultation.consultation_date }}</td>
+                        <td>{{ consultation.consultation_time }}</td>
+                        <td>
+                            {% if consultation.status == 'Pending' %}
+                                <span class="badge badge-warning">{{ consultation.status }}</span>
+                            {% elif consultation.status == 'Completed' %}
+                                <span class="badge badge-success">{{ consultation.status }}</span>
+                            {% elif consultation.status == 'Cancelled' %}
+                                <span class="badge badge-danger">{{ consultation.status }}</span>
+                            {% else %}
+                                <span class="badge badge-neutral">{{ consultation.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ consultation.remarks|default:"—" }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'consultation_edit' consultation.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'consultation_delete' consultation.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">No consultations found.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

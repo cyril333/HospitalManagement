@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Medicine Inventory | MediTrack{% endblock %}
+
+{% block content %}
+<style>
+    .filter-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr auto;
+        gap: 0.75rem;
+        align-items: end;
+    }
+
+    @media (max-width: 900px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="page-header-row">
+    <div>
+        <div class="section-title">Medicine Inventory</div>
+        <div class="section-subtitle">Track medicine stock, price, and expiry information.</div>
+    </div>
+    <a href="{% url 'medicine_add' %}" class="btn btn-primary">Add Medicine</a>
+</div>
+
+<div class="card filter-card">
+    <form method="get" class="filter-grid">
+        <div class="form-group">
+            <label for="search">Search</label>
+            <input type="text" name="search" id="search" value="{{ selected_search }}" placeholder="Search by medicine name">
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                <option value="">All Categories</option>
+                {% for item in categories %}
+                    <option value="{{ item }}" {% if selected_category == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock Status</label>
+            <select name="stock" id="stock">
+                <option value="">All</option>
+                <option value="ok" {% if selected_stock == 'ok' %}selected{% endif %}>In Stock</option>
+                <option value="low" {% if selected_stock == 'low' %}selected{% endif %}>Low Stock</option>
+                <option value="out" {% if selected_stock == 'out' %}selected{% endif %}>Out of Stock</option>
+            </select>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{% url 'medicine_list' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Stock Status</th>
+                    <th>Unit</th>
+                    <th>Expiry Date</th>
+                    <th>Expiry Status</th>
+                    <th>Unit Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicine in medicines %}
+                    <tr>
+                        <td><strong>{{ medicine.medicine_name }}</strong></td>
+                        <td>{{ medicine.category }}</td>
+                        <td>{{ medicine.quantity }}</td>
+                        <td>
+                            {% if medicine.stock_status == 'Out of Stock' %}
+                                <span class="badge badge-danger">{{ medicine.stock_status }}</span>
+                            {% elif medicine.stock_status == 'Low Stock' %}
+                                <span class="badge badge-warning">{{ medicine.stock_status }}</span>
+                            {% else %}
+                                <span class="badge badge-success">{{ medicine.stock_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ medicine.unit }}</td>
+                        <td>{{ medicine.expiry_date|default:"—" }}</td>
+                        <td>
+                            {% if medicine.expiry_status == 'Expired' %}
+                                <span class="badge badge-danger">{{ medicine.expiry_status }}</span>
+                            {% elif medicine.expiry_status == 'Expiring Soon' %}
+                                <span class="badge badge-warning">{{ medicine.expiry_status }}</span>
+                            {% else %}
+                                <span class="badge badge-neutral">{{ medicine.expiry_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>₱{{ medicine.unit_price }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'medicine_edit' medicine.pk %}" class="btn btn-secondary">Edit</a>
+                                <a href="{% url 'medicine_delete' medicine.pk %}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">No medicines found. Add a medicine record to get started.</div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
